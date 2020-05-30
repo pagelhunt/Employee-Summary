@@ -4,6 +4,7 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
@@ -130,9 +131,44 @@ function newEngineer() {
     ).then(function (response) 
     {
         var engineer = new Engineer(response.name,response.id,response.email,response.github)
-        employeeList.push(intern);
+        employeeList.push(engineer);
         createNewEmployee();
     })
+}
+
+function createNewFile(employeeList) 
+{
+    fs.writeFile(outputPath,employeeList,function(err)
+    {
+        if(err)
+        {
+            throw err;
+        }
+    })    
+}
+
+function saveList()
+{
+    if(!fs.existsSync(OUTPUT_DIR, function(err)
+    {
+        return console.log(err);
+    }))
+    {
+        fs.mkdir(OUTPUT_DIR, function(err)
+        {
+            if (err)
+            {
+                console.log(err);
+            }
+        });
+        var htmlRenderer = render(employeeList);
+        createNewFile(htmlRenderer);
+    }
+    else
+    {
+        var htmlRenderer = render(employeeList);
+        createNewFile(htmlRenderer);
+    }
 }
 
 createNewEmployee();
